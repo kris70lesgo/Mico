@@ -20,6 +20,7 @@ import './mico-popup.css';
 import './mico-lesson-options.css';
 import './mico-lesson-chrome.css';
 import './mico-activity-player.css';
+import './mico-profile.css';
 
 type View='learn'|'practice'|'leaderboard'|'quests'|'shop'|'profile'|'lesson';
 export default function MicoApp({onExplore}:{onExplore:(concept?:string)=>void}){
@@ -38,7 +39,29 @@ function Daily({progress,start}:{progress:MicoProgress;start:(lesson:Lesson)=>vo
 
 function Quests({progress,start}:{progress:MicoProgress;start:(lesson:Lesson)=>void}){const goals=[['⚡','Earn 50 XP',`${progress.dailyXp}/50`,Math.min(100,progress.dailyXp*2)],['◎','Score 90% in one lesson','0/1',0],['◴','Study for 10 minutes','4/10',40]];return <div className="mico-page-layout"><div><section className="mico-monthly"><span>SEPTEMBER</span><h2>Anatomy Quest</h2><p>17 days left</p><div><b>Complete 15 quests</b><i><em style={{width:'20%'}}/></i><small>3 / 15</small></div></section><h2 className="mico-page-title">Daily Quests <span>↻ 13 hours</span></h2><section className="mico-goal-list">{goals.map(([icon,title,value,width])=><button key={title} onClick={()=>start(allLessons[0])}><b>{icon}</b><div><strong>{title}</strong><i><em style={{width:`${width}%`}}/></i><small>{value}</small></div><span>▣</span></button>)}</section></div><aside className="mico-rail"><section className="mico-card mico-badge-card"><span>MONTHLY BADGE</span><h3>Earn your first badge!</h3><p>Complete each month’s challenge to build your anatomy badge collection.</p><div>✦</div></section></aside></div>}
 
-function Profile({progress}:{progress:MicoProgress}){const stats=[['♨',String(progress.streak),'Day streak'],['⚡',String(progress.xp),'Total XP'],['◈','Bronze','Current league'],['◎','0','Top 3 finishes']];return <div className="mico-page-layout"><div><section className="mico-profile-banner"><span className="mico-profile-big">A</span><button>✎</button></section><section className="mico-profile-copy"><h2>Guest learner</h2><p>@mico-anatomist · Local learning profile</p><b>0 Following　 0 Followers</b></section><h2 className="mico-page-title">Statistics</h2><section className="mico-stat-grid">{stats.map(([icon,value,label])=><div key={label}><i>{icon}</i><strong>{value}</strong><small>{label}</small></div>)}</section><h2 className="mico-page-title">Achievements <span>View all</span></h2><section className="mico-achievement"><Trophy size={30}/><div><b>First steps</b><p>Complete your first anatomy lesson.</p></div><span>1 / 1</span></section></div><aside className="mico-rail"><section className="mico-card mico-community"><span>STUDY BUDDIES</span><div className="mico-friends">● ● ● ● ●</div><p>Learning sticks when you study with others.</p></section><section className="mico-card"><h3>Add study buddies</h3><button className="mico-row-button">⌕ Find classmates <ChevronRight size={18}/></button><button className="mico-row-button">✉ Invite friends <ChevronRight size={18}/></button></section></aside></div>}
+function Profile({progress}:{progress:MicoProgress}){
+ const [tab,setTab]=useState<'circle'|'activity'>('circle');
+ const stats=[['🔥',String(progress.streak),'Day streak','#ff9a4a'],['✦',String(progress.xp),'Total XP','#29aaf0'],['◈','Bronze','Current league','#d79858'],['◎','0','Top 3 finishes','#a58de7']];
+ const achievements=[['First steps','Finish an anatomy lesson',Math.min(1,progress.completed.length),1,'#55c7f2'],['Heart scout','Master 3 heart activities',Math.min(3,Math.round((progress.mastery.Heart??0)/34)),3,'#f47f76'],['Steady learner','Build a 7 day streak',progress.streak,7,'#ffcb3d']];
+ return <div className="mico-profile-page">
+  <main>
+   <section className="mico-profile-hero">
+    <div className="mico-profile-hero-copy"><span className="mico-profile-eyebrow">MICO LEARNER PROFILE</span><div className="mico-profile-avatar">A<i>✦</i></div><div><h2>Guest learner</h2><p>@mico-anatomist · Building a mental map of the body</p></div><div className="mico-profile-actions"><button>✎ Edit profile</button><button>Share progress</button></div></div>
+    <img src="/mico/mascots/mico-study.png" alt="Mico studying anatomy"/>
+   </section>
+   <section className="mico-profile-milestone"><span>YOUR NEXT MILESTONE</span><div><strong>Explore the skeletal system</strong><p>Complete one femur challenge to unlock the Bone Builder badge.</p></div><button>View path <ChevronRight size={16}/></button></section>
+   <h2 className="mico-profile-heading">Your numbers</h2>
+   <section className="mico-profile-stats">{stats.map(([icon,value,label,color])=><article key={label}><i style={{background:color}}>{icon}</i><div><strong>{value}</strong><small>{label}</small></div></article>)}</section>
+   <div className="mico-profile-section-head"><h2>Achievements</h2><button>View all</button></div>
+   <section className="mico-achievement-list">{achievements.map(([title,detail,value,total,color])=>{const width=Math.min(100,Number(value)/Number(total)*100);return <article key={title}><i style={{background:color}}>✦</i><div><div><strong>{title}</strong><small>{value}/{total}</small></div><p>{detail}</p><span><em style={{width:`${width}%`,background:color}}/></span></div></article>})}</section>
+  </main>
+  <aside className="mico-profile-rail">
+   <section className="mico-profile-circle"><div className="mico-circle-tabs"><button className={tab==='circle'?'active':''} onClick={()=>setTab('circle')}>Study circle</button><button className={tab==='activity'?'active':''} onClick={()=>setTab('activity')}>Activity</button></div>{tab==='circle'?<><img src="/mico/mascots/mico-celebrate.png" alt="Mico invites you to study together"/><h3>Learning sticks together.</h3><p>Invite classmates to compare streaks, share milestones, and keep each other going.</p><button className="mico-profile-primary"><Users size={17}/>Find study buddies</button></>:<div className="mico-activity-empty"><span>✦</span><h3>Your activity feed is ready.</h3><p>Complete a lesson to share your first milestone.</p></div>}</section>
+   <section className="mico-profile-card"><span>WEEKLY FOCUS</span><h3>Heart & circulation</h3><p>You’re building confidence with chambers, flow, and valves.</p><div className="mico-focus-row"><b>3</b><span>activities complete this week</span></div><button>Continue studying <ChevronRight size={16}/></button></section>
+   <section className="mico-profile-card mico-profile-badges"><span>COLLECTED BADGES</span><div><i>♥</i><i>🦴</i><i>✦</i><i>+</i></div><button>See badge cabinet <ChevronRight size={16}/></button></section>
+  </aside>
+ </div>
+}
 
 function Shop(){return <div className="mico-shop"><section className="mico-shop-hero"><span>STUDY STORE</span><h2>Make your anatomy lab yours.</h2><p>Earn gems by completing lessons, then unlock visual study rewards.</p></section><section className="mico-shop-grid">{[['🫀','Heart focus','120 gems'],['🧠','Brain burst','180 gems'],['🦴','Bone builder','90 gems'],['✦','Streak saver','60 gems']].map(([icon,title,cost])=><article key={title}><i>{icon}</i><h3>{title}</h3><p>{cost}</p><button>Preview</button></article>)}</section></div>}
 
