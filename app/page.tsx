@@ -10,6 +10,7 @@ import {Combobox,ComboboxInput,ComboboxContent,ComboboxList,ComboboxItem,Combobo
 import AnatomyScene from './scene';
 import StudyViewer from './study-viewer';
 import MicoApp from './mico-app';
+import './mico-atlas-return.css';
 import {studyAsset,studyForName} from './study-data';
 import {DEFAULT_VISIBLE,SYSTEMS,EXPLANATIONS,explanation,type Atlas,type Concept,type SceneState,type SystemId,type View} from './anatomy';
 const initial:SceneState={explode:0,visible:DEFAULT_VISIBLE,selected:[],isolate:false,view:'three-quarter',rotate:false,reset:0};
@@ -70,5 +71,5 @@ export function AtlasExperience({initialConcept}:{initialConcept?:string}){
 export default function Home(){
  const [mode,setMode]=useState<'learn'|'atlas'>('learn'),[exploreConcept,setExploreConcept]=useState<string>();
  const openExplore=(concept?:string)=>{setExploreConcept(concept);setMode('atlas');};
- return mode==='atlas'?<><button className="mico-atlas-return" onClick={()=>setMode('learn')}>← Back to Mico</button><AtlasExperience initialConcept={exploreConcept}/></>:<MicoApp onExplore={openExplore}/>;
+ return mode==='atlas'?<><button className="mico-atlas-return" onClick={()=>setMode('learn')}>← <span>Back to Mico</span></button><AtlasExperience initialConcept={exploreConcept}/></>:<MicoApp onExplore={openExplore}/>;
 }
