@@ -1,0 +1,2 @@
+/* Final card positioning pass for the section overview. */
+.mico-section-card>div{position:static}.mico-section-card>img{z-index:0}.mico-section-card h2,.mico-section-card p,.mico-section-card>div>span,.mico-section-progress{position:relative;z-index:1}.mico-section-cta{top:auto!important;bottom:30px!important}

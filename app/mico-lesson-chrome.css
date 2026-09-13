@@ -1,0 +1,48 @@
+/* Exercises use a focused, full-canvas learning mode — no app navigation. */
+.mico-shell:has(.mico-lesson) .mico-side,.mico-shell:has(.mico-lesson) .mico-mobile,.mico-shell:has(.mico-lesson) .mico-top{display:none}
+.mico-shell:has(.mico-lesson) .mico-main{width:100%;margin-left:0;padding-top:28px;padding-right:clamp(24px,6vw,96px);padding-left:clamp(24px,6vw,96px)}
+.mico-lesson>header>span{margin-left:auto;font-size:15px}
+.mico-lesson footer{width:100vw;margin-right:calc(50% - 50vw);margin-left:calc(50% - 50vw);padding-right:max(24px,calc((100vw - 750px)/2));padding-left:max(24px,calc((100vw - 750px)/2))}
+@media(max-width:680px){.mico-shell:has(.mico-lesson) .mico-main{padding:18px 16px 0}.mico-lesson footer{padding-right:16px;padding-left:16px}}
+
+/* Keep the exercise and its result treatment pinned to the viewport, like a
+   focused lesson rather than a card inside the app shell. */
+.mico-shell:has(.mico-lesson){height:100dvh;overflow:hidden}
+.mico-shell:has(.mico-lesson) .mico-main{height:100dvh;min-height:100dvh;box-sizing:border-box;padding-bottom:0;display:flex}
+.mico-shell:has(.mico-lesson) .mico-lesson{width:100%;height:100%;min-height:100%;margin:0 auto}
+.mico-shell:has(.mico-lesson) .mico-lesson>section{min-height:0}
+.mico-shell:has(.mico-lesson) .mico-lesson footer{width:100vw;margin: auto calc(50% - 50vw) 0;padding-right:max(24px,calc((100vw - 750px)/2));padding-left:max(24px,calc((100vw - 750px)/2))}
+
+/* Wrong answers need an unmistakable, full-width finish state. */
+.mico-lesson footer.failure{min-height:178px;box-sizing:border-box;display:grid;grid-template-columns:74px minmax(0,1fr) auto;align-items:center;column-gap:22px;background:#ffe1df!important;border-top:2px solid #ffb7b4;color:#d7373c!important}
+.mico-lesson footer.failure:before{content:"×";display:grid;place-items:center;width:74px;height:74px;border-radius:50%;background:#fff;color:#ff4b4f;font-size:55px;font-weight:900;line-height:1}
+.mico-lesson footer.failure span{max-width:380px;color:#d7373c;font-size:17px;font-weight:900;line-height:1.35}
+.mico-lesson footer.failure button{min-width:164px;min-height:58px;border-radius:17px;background:#ff4b4f!important;box-shadow:0 5px #d9383d!important;color:#fff!important;font-weight:900;letter-spacing:.05em;text-transform:uppercase}
+.mico-lesson footer.failure button:hover{background:#ff6164!important;transform:translateY(-1px)}
+
+/* Mirror that confidence for a correct answer: a bright, celebratory green
+   result strip with a clear confirmation cue and a strong next action. */
+.mico-lesson footer.success{min-height:178px;box-sizing:border-box;display:grid;grid-template-columns:74px minmax(0,1fr) auto;align-items:center;column-gap:22px;background:#d7ffad!important;border-top:2px solid #b6eb83;color:#3a9700!important}
+.mico-lesson footer.success:before{content:"✓";display:grid;place-items:center;width:74px;height:74px;border-radius:50%;background:#fff;color:#58cc02;font-size:52px;font-weight:900;line-height:1}
+.mico-lesson footer.success span{max-width:380px;color:#3a9700;font-size:18px;font-weight:900;line-height:1.35}
+.mico-lesson footer.success button{min-width:164px;min-height:58px;border-radius:17px;background:#58cc02!important;box-shadow:0 5px #46a302!important;color:#fff!important;font-weight:900;letter-spacing:.05em;text-transform:uppercase}
+.mico-lesson footer.success button:hover{background:#63d40b!important;transform:translateY(-1px)}
+
+/* The 3D lesson stack sits closer to the progress bar and leaves the answer
+   field completely above the persistent action area. */
+.mico-shell:has(.mico-lesson) .mico-lesson>section{padding-top:27px;overflow-y:auto;padding-bottom:18px}
+.mico-shell:has(.mico-lesson) .mico-lesson h2{font-size:27px;line-height:1.28;margin:7px 0 18px}
+.mico-shell:has(.mico-lesson) .mico-lesson footer:not(.success):not(.failure){border-top:0;background:transparent}
+.mico-shell:has(.mico-lesson) .mico-lesson:has(.mico-answer-input)>section{padding-top:20px}
+.mico-shell:has(.mico-lesson) .mico-lesson:has(.mico-answer-input) h2{font-size:25px;margin-bottom:14px}
+
+@media(max-width:680px){
+  .mico-shell:has(.mico-lesson) .mico-main{height:100dvh;min-height:100dvh;padding:18px 16px 0}
+  .mico-shell:has(.mico-lesson) .mico-lesson footer{padding-right:16px;padding-left:16px}
+  .mico-lesson footer.failure{min-height:170px;grid-template-columns:55px minmax(0,1fr);gap:12px;padding-top:18px;padding-bottom:18px}
+  .mico-lesson footer.failure:before{width:55px;height:55px;font-size:42px}
+  .mico-lesson footer.failure button{grid-column:1/-1;width:100%}
+  .mico-lesson footer.success{min-height:170px;grid-template-columns:55px minmax(0,1fr);gap:12px;padding-top:18px;padding-bottom:18px}
+  .mico-lesson footer.success:before{width:55px;height:55px;font-size:40px}
+  .mico-lesson footer.success button{grid-column:1/-1;width:100%}
+}
