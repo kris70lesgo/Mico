@@ -12,6 +12,15 @@
 .mico-shell:has(.mico-lesson) .mico-lesson{width:100%;height:100%;min-height:100%;margin:0 auto}
 .mico-shell:has(.mico-lesson) .mico-lesson>section{min-height:0}
 .mico-shell:has(.mico-lesson) .mico-lesson footer{width:100vw;margin: auto calc(50% - 50vw) 0;padding-right:max(24px,calc((100vw - 750px)/2));padding-left:max(24px,calc((100vw - 750px)/2))}
+.mico-lesson.mico-result{max-width:560px;align-items:center;justify-content:center;text-align:center;padding-bottom:9vh;box-sizing:border-box}
+.mico-lesson.mico-result .mico-result-badge{margin:0 0 22px}
+.mico-lesson.mico-result>span{margin-top:0}
+.mico-lesson.mico-result h2{margin:9px 0}
+.mico-lesson.mico-result .mico-primary{margin:0;align-self:center}
+.mico-lesson.mico-result .mico-result-stats{display:flex;gap:13px;margin:28px 0}
+.mico-lesson.mico-result .mico-result-stats>div{min-width:150px;padding:17px 20px;border:2px solid #dce8e5;border-bottom-width:5px;border-radius:18px;background:#f6fcf8;display:grid;gap:3px}
+.mico-lesson.mico-result .mico-result-stats b{font-size:28px;color:#159d8d}
+.mico-lesson.mico-result .mico-result-stats small{color:#6f8490;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
 
 /* Wrong answers need an unmistakable, full-width finish state. */
 .mico-lesson footer.failure{min-height:178px;box-sizing:border-box;display:grid;grid-template-columns:74px minmax(0,1fr) auto;align-items:center;column-gap:22px;background:#ffe1df!important;border-top:2px solid #ffb7b4;color:#d7373c!important}

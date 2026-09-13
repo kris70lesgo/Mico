@@ -1,5 +1,5 @@
 import {useEffect,useMemo,useState} from 'react';
-import {Crosshair,GripVertical,Type,Undo2} from 'lucide-react';
+import {GripVertical,Type,Undo2} from 'lucide-react';
 import StudyViewer from './study-viewer';
 import {STUDY_ORGANS} from './study-data';
 import type {Activity,ActivityAnswer} from './mico-lesson-types';
@@ -8,11 +8,10 @@ type Props={activity:Activity;disabled:boolean;onAnswerChange:(answer:ActivityAn
 const letters=['A','B','C','D'];
 
 export default function MicoActivityPlayer({activity,disabled,onAnswerChange}:Props){
- const [choice,setChoice]=useState<number|undefined>();const [target,setTarget]=useState<string|undefined>();const [typed,setTyped]=useState('');const [ordered,setOrdered]=useState<string[]>([]);
- useEffect(()=>{setChoice(undefined);setTarget(undefined);setTyped('');setOrdered([]);onAnswerChange(undefined);},[activity.id]);
+ const [choice,setChoice]=useState<number|undefined>();const [typed,setTyped]=useState('');const [ordered,setOrdered]=useState<string[]>([]);
+ useEffect(()=>{setChoice(undefined);setTyped('');setOrdered([]);onAnswerChange(undefined);},[activity.id]);
  const organ='organ' in activity?STUDY_ORGANS.find(item=>item.id===activity.organ):undefined;
  const choose=(index:number)=>{if(disabled)return;setChoice(index);onAnswerChange({value:index});};
- const chooseTarget=(id:string)=>{if(disabled)return;setTarget(id);onAnswerChange({value:id,target:id});};
  const updateText=(value:string)=>{if(disabled)return;setTyped(value);onAnswerChange(value.trim()?{value}:undefined);};
  const remaining=useMemo(()=>activity.kind==='sequence-flow'?activity.steps.filter(item=>!ordered.includes(item.id)):[],[activity,ordered]);
  const addStep=(id:string)=>{if(disabled)return;const next=[...ordered,id];setOrdered(next);onAnswerChange({value:next});};
@@ -20,8 +19,7 @@ export default function MicoActivityPlayer({activity,disabled,onAnswerChange}:Pr
  const optionList=activity.kind==='mcq'||activity.kind==='function-from-model'||activity.kind==='case-application'?activity.options:undefined;
  return <div className={`mico-activity mico-activity-${activity.kind}`}>
   {organ&&<div className="mico-model-card" aria-label={`Interactive 3D ${organ.name} model`}>
-   <StudyViewer key={activity.id} organ={organ} stage showCaption={false} mode={activity.kind==='function-from-model'?'reveal':activity.kind==='identify-hotspot'||activity.kind==='type-label'?'identify':'study'} target={'target' in activity?activity.target:undefined} onTargetSelect={chooseTarget}/>
-   {activity.kind==='identify-hotspot'&&<div className="mico-target-status"><Crosshair size={16}/>{target?'Target selected — check your answer.':activity.hint}</div>}
+   <StudyViewer key={activity.id} organ={organ} stage showCaption={false} mode="study" showHotspots={false}/>
    {activity.kind==='type-label'&&<div className="mico-target-status"><Type size={16}/>{activity.hint}</div>}
   </div>}
   {activity.kind==='type-label'&&<label className="mico-answer-input"><span>Your answer</span><input value={typed} onChange={event=>updateText(event.target.value)} disabled={disabled} autoComplete="off" autoCapitalize="words" placeholder="Type the structure name"/></label>}
