@@ -10,6 +10,9 @@ import {Combobox,ComboboxInput,ComboboxContent,ComboboxList,ComboboxItem,Combobo
 import AnatomyScene from './scene';
 import StudyViewer from './study-viewer';
 import MicoApp from './mico-app';
+import MicoAuth from './mico-auth';
+import {supabase} from './supabase';
+import type {User} from '@supabase/supabase-js';
 import './mico-atlas-return.css';
 import {studyAsset,studyForName} from './study-data';
 import {DEFAULT_VISIBLE,SYSTEMS,EXPLANATIONS,explanation,type Atlas,type Concept,type SceneState,type SystemId,type View} from './anatomy';
@@ -69,7 +72,11 @@ export function AtlasExperience({initialConcept}:{initialConcept?:string}){
 }
 
 export default function Home(){
- const [mode,setMode]=useState<'learn'|'atlas'>('learn'),[exploreConcept,setExploreConcept]=useState<string>();
+ const [mode,setMode]=useState<'learn'|'atlas'>('learn'),[exploreConcept,setExploreConcept]=useState<string>();const [user,setUser]=useState<User|null>(null);const [demo,setDemo]=useState(false);const [authReady,setAuthReady]=useState(false);
+ useEffect(()=>{if(!supabase){setAuthReady(true);return}supabase.auth.getUser().then(({data})=>{setUser(data.user);setAuthReady(true)});const {data:{subscription}}=supabase.auth.onAuthStateChange((_event,session)=>{setUser(session?.user??null);setAuthReady(true)});return()=>subscription.unsubscribe()},[]);
  const openExplore=(concept?:string)=>{setExploreConcept(concept);setMode('atlas');};
- return mode==='atlas'?<><button className="mico-atlas-return" onClick={()=>setMode('learn')}>← <span>Back to Mico</span></button><AtlasExperience initialConcept={exploreConcept}/></>:<MicoApp onExplore={openExplore}/>;
+ if(!authReady)return <main className="mico-auth-loading">Preparing your anatomy lab…</main>;
+ if(!user&&!demo)return <MicoAuth onDemo={()=>setDemo(true)}/>;
+ const learner={id:user?.id??'mico-public-demo',name:user?.user_metadata?.full_name||user?.email?.split('@')[0]||'Demo learner',email:user?.email,demo,onSignOut:()=>{if(demo){setDemo(false);return}supabase?.auth.signOut()}};
+ return mode==='atlas'?<><button className="mico-atlas-return" onClick={()=>setMode('learn')}>← <span>Back to Mico</span></button><AtlasExperience initialConcept={exploreConcept}/></>:<MicoApp onExplore={openExplore} learner={learner}/>;
 }
