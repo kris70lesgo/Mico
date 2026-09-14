@@ -6,6 +6,14 @@ import type {Activity,ActivityAnswer} from './mico-lesson-types';
 
 type Props={activity:Activity;disabled:boolean;onAnswerChange:(answer:ActivityAnswer|undefined)=>void};
 const letters=['A','B','C','D'];
+const activityLabels:Record<Activity['kind'],string>={
+ mcq:'Choose the best answer',
+ 'type-label':'Name the structure',
+ 'function-from-model':'Read the structure',
+ 'sequence-flow':'Build the pathway',
+ 'case-application':'Clinical reasoning',
+ 'identify-hotspot':'Locate the structure',
+};
 
 export default function MicoActivityPlayer({activity,disabled,onAnswerChange}:Props){
  const [choice,setChoice]=useState<number|undefined>();const [typed,setTyped]=useState('');const [ordered,setOrdered]=useState<string[]>([]);
@@ -18,6 +26,7 @@ export default function MicoActivityPlayer({activity,disabled,onAnswerChange}:Pr
  const removeStep=(id:string)=>{if(disabled)return;const next=ordered.filter(item=>item!==id);setOrdered(next);onAnswerChange(next.length?{value:next}:undefined);};
  const optionList=activity.kind==='mcq'||activity.kind==='function-from-model'||activity.kind==='case-application'?activity.options:undefined;
  return <div className={`mico-activity mico-activity-${activity.kind}`}>
+  <div className="mico-activity-brief"><span>{activityLabels[activity.kind]}</span><p>{activity.learningObjective}</p></div>
   {organ&&<div className="mico-model-card" aria-label={`Interactive 3D ${organ.name} model`}>
    <StudyViewer key={activity.id} organ={organ} stage showCaption={false} mode="study" showHotspots={false}/>
    {activity.kind==='type-label'&&<div className="mico-target-status"><Type size={16}/>{activity.hint}</div>}
