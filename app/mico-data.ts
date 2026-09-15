@@ -74,6 +74,16 @@ const skeletalLab:Activity[]=[
  ...foundationMap.slice(1,2),
 ];
 
+const muscleLab:Activity[]=[
+ {...base('muscle-biceps-model','Rotate the upper-arm model, then type the muscle on the anterior arm that flexes the elbow.','Biceps brachii lies in the anterior compartment and flexes the elbow; it also helps supinate the forearm.','Identify a major upper-arm muscle from action and position.','Muscular system'),kind:'type-label',organ:'muscle-arm',target:'biceps',accepted:['biceps','biceps brachii'],hint:'Look at the prominent muscle on the front of the upper arm.'},
+ {...base('muscle-triceps-function','Inspect the opposing posterior upper-arm muscle. Which movement does it produce at the elbow?','Triceps brachii extends the elbow by pulling on the olecranon of the ulna.','Connect a muscle’s position with its primary action.','Muscular system'),kind:'function-from-model',organ:'muscle-arm',target:'triceps',options:['Elbow extension','Elbow flexion','Hip flexion','Wrist pronation'],answer:0},
+ mcq('muscle-antagonist','During elbow flexion, biceps brachii and triceps brachii are best described as…',['Synergists','Antagonists','Ligaments','Tendons'],1,'They are antagonists: biceps flexes the elbow while triceps extends it.','Recognize opposing muscle pairs.','Muscular system'),
+ mcq('muscle-diaphragm','Which muscle is the primary driver of quiet inspiration?',['Rectus abdominis','Diaphragm','Trapezius','Gluteus maximus'],1,'The diaphragm contracts and descends to increase thoracic volume during quiet inspiration.','Identify a core respiratory muscle.','Muscular system'),
+ mcq('muscle-rotator-cuff','Which muscle is part of the rotator cuff?',['Biceps brachii','Supraspinatus','Pectoralis major','Latissimus dorsi'],1,'Supraspinatus, infraspinatus, teres minor, and subscapularis stabilize the glenohumeral joint.','Recognize the rotator cuff.','Muscular system'),
+ {...base('muscle-case-radial','A patient cannot actively extend the elbow after a posterior arm injury. Which muscle is most likely impaired?','Triceps brachii is the primary extensor of the elbow and is innervated by the radial nerve.','Apply muscle action to a clinical deficit.','Muscular system'),kind:'case-application',organ:'muscle-arm',target:'triceps',options:['Biceps brachii','Brachialis','Triceps brachii','Pronator teres'],answer:2},
+ mcq('muscle-sarcomere','Which structure is the basic contractile unit of skeletal muscle?',['Osteon','Sarcomere','Alveolus','Nephron'],1,'Sarcomeres are repeating actin-myosin units that shorten during skeletal-muscle contraction.','Relate microscopic organization to muscle contraction.','Muscular system'),
+];
+
 const named=(prefix:string,titles:string[],icon:string,activities:Activity[])=>titles.map((title,index)=>lesson(`${prefix}-${index+1}`,title,icon,activities));
 
 export const units:Unit[]=[
@@ -83,6 +93,7 @@ export const units:Unit[]=[
   ...named('foundations',['Directional language','Planes in practice','Inside the body','Regions and quadrants','Surface landmarks','Imaging orientation','Movement vocabulary','Anatomy map lab','Foundations checkpoint'],'◫',foundationMap),
  ]},
  {id:'skeletal',title:'Skeletal System',description:'Build your framework from skull to toes.',color:'#f4b844',lessons:named('skeletal',['Bones, first look','Bone tissue','Axial skeleton','Skull landmarks','Vertebral column','Thoracic cage','Upper limb','Hand and wrist','Pelvis','Lower limb','Joints in motion','Skeletal checkpoint'],'🦴',skeletalLab)},
+ {id:'muscular',title:'Muscular System',description:'Link form, force, movement, and clinical function.',color:'#d9565b',lessons:named('muscle',['Muscle map','Upper arm actions','Rotator cuff','Forearm compartments','Hip and thigh','Leg and ankle','Diaphragm','Muscle contraction','Peripheral nerve injuries','Muscular checkpoint'],'💪',muscleLab)},
  {id:'heart',title:'Heart & Circulation',description:'Follow the route of every heartbeat.',color:'#ee6f63',lessons:[lesson('heart-chambers','Heart chambers','♥',heartChambers),lesson('heart-flow','Blood flow','↗',heartFlow),...named('heart',['External anatomy','Heart valves','Great vessels','Coronary circulation','Conduction system','Cardiac cycle','Pressure and flow','Fetal circulation','Clinical heart cases','Heart checkpoint'],'♥',heartFlow)]},
  {id:'brain',title:'Brain & Nerves',description:'Trace signals from thought to movement.',color:'#9076e8',lessons:named('brain',['Brain orientation','Brain regions','Cerebellum and balance','Brainstem','Cranial nerves','Motor pathways','Sensory pathways','Autonomic system','Neuro cases','Brain checkpoint'],'◉',brainLab)},
  {id:'respiratory',title:'Respiratory System',description:'Learn how oxygen reaches every cell.',color:'#55b9c4',lessons:named('resp',['Airway orientation','Lung lobes','Bronchial tree','Pleura','Alveoli','Gas exchange','Ventilation and perfusion','Diaphragm','Respiratory cases','Breathing checkpoint'],'☁',lungLab)},

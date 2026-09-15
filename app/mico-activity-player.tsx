@@ -3,8 +3,9 @@ import {GripVertical,Type,Undo2} from 'lucide-react';
 import StudyViewer from './study-viewer';
 import {STUDY_ORGANS} from './study-data';
 import type {Activity,ActivityAnswer} from './mico-lesson-types';
+import type {MicoSound} from './mico-sound';
 
-type Props={activity:Activity;disabled:boolean;onAnswerChange:(answer:ActivityAnswer|undefined)=>void};
+type Props={activity:Activity;disabled:boolean;onAnswerChange:(answer:ActivityAnswer|undefined)=>void;onInteraction?:(sound:MicoSound)=>void};
 const letters=['A','B','C','D'];
 const activityLabels:Record<Activity['kind'],string>={
  mcq:'Choose the best answer',
@@ -15,14 +16,14 @@ const activityLabels:Record<Activity['kind'],string>={
  'identify-hotspot':'Locate the structure',
 };
 
-export default function MicoActivityPlayer({activity,disabled,onAnswerChange}:Props){
+export default function MicoActivityPlayer({activity,disabled,onAnswerChange,onInteraction}:Props){
  const [choice,setChoice]=useState<number|undefined>();const [typed,setTyped]=useState('');const [ordered,setOrdered]=useState<string[]>([]);
  useEffect(()=>{setChoice(undefined);setTyped('');setOrdered([]);onAnswerChange(undefined);},[activity.id]);
  const organ='organ' in activity?STUDY_ORGANS.find(item=>item.id===activity.organ):undefined;
- const choose=(index:number)=>{if(disabled)return;setChoice(index);onAnswerChange({value:index});};
+ const choose=(index:number)=>{if(disabled)return;onInteraction?.('select');setChoice(index);onAnswerChange({value:index});};
  const updateText=(value:string)=>{if(disabled)return;setTyped(value);onAnswerChange(value.trim()?{value}:undefined);};
  const remaining=useMemo(()=>activity.kind==='sequence-flow'?activity.steps.filter(item=>!ordered.includes(item.id)):[],[activity,ordered]);
- const addStep=(id:string)=>{if(disabled)return;const next=[...ordered,id];setOrdered(next);onAnswerChange({value:next});};
+ const addStep=(id:string)=>{if(disabled)return;onInteraction?.('select');const next=[...ordered,id];setOrdered(next);onAnswerChange({value:next});};
  const removeStep=(id:string)=>{if(disabled)return;const next=ordered.filter(item=>item!==id);setOrdered(next);onAnswerChange(next.length?{value:next}:undefined);};
  const optionList=activity.kind==='mcq'||activity.kind==='function-from-model'||activity.kind==='case-application'?activity.options:undefined;
  return <div className={`mico-activity mico-activity-${activity.kind}`}>

@@ -31,6 +31,14 @@ export default function StudyViewer({organ,stage=false,showCaption=stage,showHot
    const greaterTrochanter=new T.Mesh(new T.SphereGeometry(.36,24,18),mat);greaterTrochanter.position.set(.4,1.28,0);bone.add(greaterTrochanter);
    const medial=new T.Mesh(new T.SphereGeometry(.43,28,20),mat);medial.position.set(-.25,-1.75,.03);bone.add(medial);
    const lateral=new T.Mesh(new T.SphereGeometry(.43,28,20),mat);lateral.position.set(.36,-1.75,.03);bone.add(lateral);placeModel(bone);
+  }else if(organ.id==='muscle-arm'){
+   const arm=new T.Group(),boneMat=new T.MeshStandardMaterial({color:0xf0d2ad,roughness:.62}),muscleMat=new T.MeshStandardMaterial({color:0xc94e4f,roughness:.47,metalness:.03});
+   const humerus=new T.Mesh(new T.CylinderGeometry(.22,.19,2.9,28),boneMat);arm.add(humerus);
+   const radius=new T.Mesh(new T.CylinderGeometry(.15,.12,1.35,22),boneMat);radius.position.set(-.16,-2.08,.04);radius.rotation.z=-.12;arm.add(radius);
+   const ulna=new T.Mesh(new T.CylinderGeometry(.14,.12,1.35,22),boneMat);ulna.position.set(.16,-2.08,-.04);ulna.rotation.z=.12;arm.add(ulna);
+   const biceps=new T.Mesh(new T.CapsuleGeometry(.36,1.35,10,24),muscleMat);biceps.position.set(-.35,.24,.48);biceps.rotation.z=-.08;arm.add(biceps);
+   const triceps=new T.Mesh(new T.CapsuleGeometry(.36,1.4,10,24),new T.MeshStandardMaterial({color:0xa74048,roughness:.5}));triceps.position.set(.28,.02,-.47);triceps.rotation.z=.07;arm.add(triceps);
+   const tendon=new T.Mesh(new T.CylinderGeometry(.1,.13,.85,20),new T.MeshStandardMaterial({color:0xf1e2cc,roughness:.6}));tendon.position.set(0,-1.52,.38);tendon.rotation.z=.1;arm.add(tendon);placeModel(arm);
   }else loader.load(organ.model,gltf=>{if(disposed)return;placeModel(gltf.scene);},undefined,()=>{if(!disposed)setError(true);});
   const observer=new ResizeObserver(()=>{const w=el.clientWidth,h=el.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();});observer.observe(el);const projected=new T.Vector3();
   const draw=()=>{if(disposed)return;frame=requestAnimationFrame(draw);const delta=clock.getDelta();if(model&&rotatingRef.current)pivot.rotation.y+=delta*.32;controls.update();renderer.render(scene,camera);const w=el.clientWidth,h=el.clientHeight;organ.hotspots.forEach((hotspot,index)=>{const node=points.current[index];if(!node)return;projected.fromArray(hotspot.position);pivot.localToWorld(projected);projected.project(camera);const visible=projected.z>-1&&projected.z<1;node.style.transform=`translate(${(projected.x*.5+.5)*w}px,${(-projected.y*.5+.5)*h}px) translate(-50%,-50%)`;node.style.opacity=visible?'1':'0';node.style.pointerEvents=visible?'auto':'none';});};draw();

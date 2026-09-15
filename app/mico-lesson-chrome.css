@@ -2,6 +2,7 @@
 .mico-shell:has(.mico-lesson) .mico-side,.mico-shell:has(.mico-lesson) .mico-mobile,.mico-shell:has(.mico-lesson) .mico-top{display:none}
 .mico-shell:has(.mico-lesson) .mico-main{width:100%;margin-left:0;padding-top:28px;padding-right:clamp(24px,6vw,96px);padding-left:clamp(24px,6vw,96px)}
 .mico-lesson>header>span{margin-left:auto;font-size:15px}
+.mico-lesson>header .mico-lesson-sound{margin-left:auto;border:0;background:transparent;color:#718894;font-size:0;padding:8px;display:grid;place-items:center}.mico-lesson>header .mico-lesson-sound+span{margin-left:0}
 .mico-lesson footer{width:100vw;margin-right:calc(50% - 50vw);margin-left:calc(50% - 50vw);padding-right:max(24px,calc((100vw - 750px)/2));padding-left:max(24px,calc((100vw - 750px)/2))}
 @media(max-width:680px){.mico-shell:has(.mico-lesson) .mico-main{padding:18px 16px 0}.mico-lesson footer{padding-right:16px;padding-left:16px}}
 
