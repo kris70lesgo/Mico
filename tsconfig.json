@@ -39,6 +39,7 @@
   "exclude": [
     "node_modules",
     "anatomy-main",
-    "duolingo-clone-main"
+    "duolingo-clone-main",
+    "supabase/functions"
   ]
 }
