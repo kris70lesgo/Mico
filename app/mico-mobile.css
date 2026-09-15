@@ -1,0 +1,89 @@
+/* Final mobile layer: a small-screen anatomy notebook, not a compressed desktop dashboard. */
+.mico-mobile-nav{display:none}
+
+@media(max-width:680px){
+  .mico-shell{min-height:100dvh;padding-bottom:calc(75px + env(safe-area-inset-bottom));background:#102126}
+  .mico-main{box-sizing:border-box;min-height:calc(100dvh - 70px);padding:20px 16px 28px!important}
+  .mico-top{position:relative!important;display:flex!important;justify-content:space-between!important;align-items:center;margin:0 0 20px!important;min-height:38px}
+  .mico-top>div:first-child{display:none}
+  .mico-top .mico-stats{width:100%;justify-content:flex-end;gap:11px}
+  .mico-stats .mico-status-counter>div{right:0;left:auto;min-width:178px}
+  .mico-layout,.mico-page-layout,.mico-practice-hub{width:100%;min-width:0;display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:20px!important}
+  .mico-sections{padding-top:0!important;min-width:0}
+  .mico-expedition-strip{padding:15px!important;border-radius:17px!important;gap:11px!important}
+  .mico-expedition-strip i{width:38px!important;height:38px!important;font-size:18px!important}
+  .mico-expedition-strip b{font-size:13px!important;line-height:1.25}
+  .mico-expedition-strip span{font-size:10px!important}
+  .mico-expedition-strip button{min-height:40px!important;padding:0 12px!important}
+  .mico-hero{min-height:150px!important;padding:21px!important;border-radius:18px!important}
+  .mico-hero h2{max-width:100%;padding-right:0;font-size:23px!important}
+  .mico-hero .mico-primary{position:static!important;width:100%;min-height:49px;margin-top:18px;justify-content:center}
+  .mico-section-title{display:block!important;margin:32px 0 18px!important}
+  .mico-section-title:before,.mico-section-title:after{display:none!important}
+  .mico-section-title h2{font-size:17px!important;line-height:1.4!important}
+  .mico-rail{display:grid!important;grid-template-columns:1fr!important;margin-top:0!important;gap:14px!important}
+  .mico-card{padding:18px!important;border-radius:19px!important}
+  .mico-card h3{font-size:19px!important}
+  .mico-section-card{min-height:252px!important;margin:14px 0!important;padding:23px!important;border-radius:19px!important}
+  .mico-section-card>div{max-width:100%!important}
+  .mico-section-card h2{margin:14px 0 8px!important;font-size:24px!important}
+  .mico-section-card p{min-height:0!important;font-size:13px!important}
+  .mico-section-card>img{display:block!important;width:108px!important;height:108px!important;right:10px!important;top:11px!important;opacity:.45}
+  .mico-section-card .mico-section-cta{position:absolute!important;right:21px!important;bottom:20px!important;left:21px!important;width:auto!important;min-height:50px!important}
+  .mico-unit-detail .mico-nodes{min-height:0!important;padding-top:28px!important;gap:27px!important}
+  .mico-unit-detail .mico-nodes:before{top:20px!important;bottom:20px!important}
+  .mico-node{width:190px!important;min-height:62px!important}
+  .mico-node i{width:62px!important;height:62px!important;border-width:6px!important;font-size:24px!important}
+  .mico-node.current i{width:76px!important;height:76px!important;font-size:30px!important}
+  .mico-node.current:after{transform:translateY(-57px)!important;font-size:10px!important}
+  .mico-shop-page{margin-bottom:8px!important}
+  .mico-shop-banner{min-height:260px!important;padding:24px!important}
+  .mico-shop-banner h2{max-width:70%!important;font-size:27px!important}
+  .mico-shop-banner p{max-width:67%!important}
+  .mico-shop-banner>img{right:-36px!important;bottom:-18px!important;width:205px!important;height:205px!important}
+  .mico-profile-page,.mico-practice-main{min-width:0}
+  .mico-practice-aside{display:grid;gap:14px}
+  .mico-rewind-banner{min-height:270px!important;border-radius:21px!important}
+  .mico-rewind-copy{max-width:67%!important;padding:22px!important}
+  .mico-rewind-copy h2{font-size:28px!important}
+  .mico-practice-metrics{grid-template-columns:1fr!important;gap:10px!important}
+  .mico-practice-drills,.mico-practice-collections{grid-template-columns:1fr!important}
+  .mico-league-head{padding:24px 20px!important}
+  .mico-lesson-options,.mico-options{grid-template-columns:1fr!important}
+  .mico-options button{min-height:64px!important;font-size:14px!important}
+  .mico-answer-input input{min-height:56px!important;font-size:16px!important}
+  .mico-model-card{height:min(43dvh,320px)!important;border-radius:19px!important}
+  .mico-model-card .study-viewer-controls{bottom:8px!important;transform:scale(.9);transform-origin:center bottom}
+  .mico-shell:has(.mico-lesson){padding-bottom:0!important}
+  .mico-shell:has(.mico-lesson) .mico-mobile-nav{display:none!important}
+  .mico-shell:has(.mico-lesson) .mico-main{padding:14px 16px 0!important}
+  .mico-shell:has(.mico-lesson) .mico-lesson>header{height:46px!important;gap:12px!important}
+  .mico-shell:has(.mico-lesson) .mico-lesson>section{padding-top:18px!important;padding-bottom:12px!important}
+  .mico-shell:has(.mico-lesson) .mico-lesson h2{font-size:23px!important;line-height:1.27!important;margin:7px 0 16px!important}
+  .mico-shell:has(.mico-lesson) .mico-lesson footer{padding:14px 16px calc(14px + env(safe-area-inset-bottom))!important}
+  .mico-lesson footer:not(.success):not(.failure){display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:10px!important;min-height:96px!important}
+  .mico-lesson footer:not(.success):not(.failure) button{width:100%;min-height:50px;justify-content:center}
+  .mico-mobile-nav{position:fixed;z-index:30;right:0;bottom:0;left:0;display:grid;grid-template-columns:repeat(4,1fr);min-height:68px;padding:7px max(10px,env(safe-area-inset-right)) calc(7px + env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));border-top:1px solid #344952;background:#142a32f2;backdrop-filter:blur(18px);box-shadow:0 -9px 25px #07151a50}
+  .mico-mobile-nav button{display:grid;place-items:center;gap:3px;min-height:52px;border:0;border-radius:14px;background:transparent;color:#9bb0b8;font:800 10px/1 "Avenir Next",ui-rounded,sans-serif;cursor:pointer}
+  .mico-mobile-nav button svg{stroke-width:2.6}
+  .mico-mobile-nav button.active{color:#55c6fa;background:#1d3b46;box-shadow:inset 0 0 0 1px #367a98}
+}
+
+@media(max-width:420px){
+  .mico-main{padding-inline:13px!important}
+  .mico-mobile{padding-inline:14px!important}
+  .mico-top .mico-stats{gap:7px}
+  .mico-stats .mico-sound-toggle{padding:7px!important}
+  .mico-section-card>img{display:none!important}
+  .mico-section-card h2{font-size:22px!important}
+  .mico-shop-banner h2{max-width:64%!important;font-size:24px!important}
+  .mico-shop-banner p{font-size:12px!important}
+  .mico-practice-section-head h2{font-size:22px!important}
+}
+
+@media(max-height:540px) and (orientation:landscape){
+  .mico-mobile-nav{display:none!important}
+  .mico-shell{padding-bottom:0!important}
+  .mico-main{min-height:calc(100dvh - 58px)!important;padding-bottom:20px!important}
+  .mico-mobile{height:58px!important}
+}
