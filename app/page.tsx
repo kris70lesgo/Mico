@@ -11,6 +11,7 @@ import AnatomyScene from './scene';
 import StudyViewer from './study-viewer';
 import MicoApp from './mico-app';
 import MicoAuth from './mico-auth';
+import MicoLanding from './mico-landing';
 import {supabase} from './supabase';
 import type {User} from '@supabase/supabase-js';
 import './mico-atlas-return.css';
@@ -72,11 +73,13 @@ export function AtlasExperience({initialConcept}:{initialConcept?:string}){
 }
 
 export default function Home(){
- const [mode,setMode]=useState<'learn'|'atlas'>('learn'),[exploreConcept,setExploreConcept]=useState<string>();const [user,setUser]=useState<User|null>(null);const [demo,setDemo]=useState(false);const [authReady,setAuthReady]=useState(false);
+ const [mode,setMode]=useState<'learn'|'atlas'>('learn'),[exploreConcept,setExploreConcept]=useState<string>();const [user,setUser]=useState<User|null>(null);const [demo,setDemo]=useState(false);const [authReady,setAuthReady]=useState(false);const [path,setPath]=useState(()=>window.location.pathname);
+ const navigate=(next:'/'|'/login'|'/signup')=>{if(window.location.pathname!==next){window.history.pushState({},'',next);setPath(next)}window.scrollTo({top:0,behavior:'auto'})};
+ useEffect(()=>{const syncPath=()=>setPath(window.location.pathname);window.addEventListener('popstate',syncPath);return()=>window.removeEventListener('popstate',syncPath)},[]);
  useEffect(()=>{if(!supabase){setAuthReady(true);return}supabase.auth.getUser().then(({data})=>{setUser(data.user);setAuthReady(true)});const {data:{subscription}}=supabase.auth.onAuthStateChange((_event,session)=>{setUser(session?.user??null);setAuthReady(true)});return()=>subscription.unsubscribe()},[]);
  const openExplore=(concept?:string)=>{setExploreConcept(concept);setMode('atlas');};
  if(!authReady)return <main className="mico-auth-loading">Preparing your anatomy lab…</main>;
- if(!user&&!demo)return <MicoAuth onDemo={()=>setDemo(true)}/>;
- const learner={id:user?.id??'mico-public-demo',name:user?.user_metadata?.full_name||user?.email?.split('@')[0]||'Demo learner',email:user?.email,demo,onSignOut:()=>{if(demo){setDemo(false);return}supabase?.auth.signOut()}};
+ if(!user&&!demo){if(path==='/login'||path==='/signup')return <MicoAuth initialMode={path==='/signup'?'signup':'login'} onNavigate={navigate} onDemo={()=>setDemo(true)}/>;return <MicoLanding onNavigate={navigate} onDemo={()=>setDemo(true)}/>}
+ const learner={id:user?.id??'mico-public-demo',name:user?.user_metadata?.full_name||user?.email?.split('@')[0]||'Demo learner',email:user?.email,demo,onSignOut:()=>{if(demo){setDemo(false);navigate('/');return}supabase?.auth.signOut()}};
  return mode==='atlas'?<><button className="mico-atlas-return" onClick={()=>setMode('learn')}>← <span>Back to Mico</span></button><AtlasExperience initialConcept={exploreConcept}/></>:<MicoApp onExplore={openExplore} learner={learner}/>;
 }
