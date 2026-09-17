@@ -1,2 +1,5 @@
-import AuthRoute from '../auth-route';
-export default function RegisterPage(){return <AuthRoute mode="signup"/>}
+import { redirect } from "next/navigation";
+
+export default function RegisterPage() {
+  redirect("/login");
+}

@@ -1,2 +1,5 @@
-import AuthRoute from '../auth-route';
-export default function LoginPage(){return <AuthRoute mode="login"/>}
+import AuthRoute from "../auth-route";
+
+export default function LoginPage() {
+  return <AuthRoute />;
+}

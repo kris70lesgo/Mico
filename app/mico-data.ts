@@ -7,12 +7,33 @@ const mcq=(id:string,prompt:string,options:string[],answer:number,explanation:st
 const lesson=(id:string,title:string,icon:string,activities:Activity[]):Lesson=>({id,title,icon,subtitle:'8 min · interactive',activities});
 
 const foundationMap:Activity[]=[
- {...base('fnd-3d-heart','Rotate the heart, then type the chamber with the thickest myocardium.','The left ventricle generates systemic pressure and therefore has the thickest wall.','Identify a structure using its position and function.','Heart'),kind:'type-label',organ:'heart',target:'left-ventricle',accepted:['left ventricle','lv'],hint:'Inspect the lower chambers, then type your answer below.'},
+ {...base('fnd-3d-brain','Rotate the brain, then type the posterior-inferior structure that coordinates balance and gait.','The cerebellum integrates sensory input to coordinate posture, balance, and voluntary movement.','Use a 3D landmark to identify a major brain structure.','Brain'),kind:'type-label',organ:'brain',target:'cerebellum',accepted:['cerebellum'],hint:'Look behind and below the cerebral hemispheres.'},
  mcq('fnd-plane','Which plane divides the body into right and left portions?',['Frontal','Sagittal','Transverse','Oblique'],1,'A sagittal plane divides the body into right and left portions.','Recognize anatomical planes.'),
  mcq('fnd-medial','The heart is ___ to the lungs.',['Lateral','Superior','Medial','Posterior'],2,'The heart lies near the midline, so it is medial to both lungs.','Use relational anatomical language.','Heart'),
  mcq('fnd-superior','Which term means closer to the head?',['Proximal','Inferior','Superior','Distal'],2,'Superior means toward the head; inferior means toward the feet.','Apply directional terminology.'),
  mcq('fnd-cavity','The heart is located within which major body cavity?',['Cranial cavity','Thoracic cavity','Abdominopelvic cavity','Vertebral canal'],1,'The heart lies in the thoracic cavity, within the mediastinum.','Associate a structure with its body cavity.','Heart'),
  mcq('fnd-prone','A patient lying face down is described as…',['Supine','Prone','Lateral','Anterior'],1,'Prone means lying face down; supine means lying face up.','Use standard patient-position terminology.'),
+];
+
+const positionMap:Activity[]=[
+ {...base('fnd-femur-head','Rotate the femur, then type the rounded proximal structure that articulates with the acetabulum.','The femoral head articulates with the acetabulum to form the hip joint.','Identify a long-bone landmark in 3D.','Skeletal system'),kind:'type-label',organ:'femur',target:'head',accepted:['femoral head','head of femur','head'],hint:'Find the smooth, rounded end nearest the hip.'},
+ mcq('fnd-anatomical-position','In standard anatomical position, the palms face…',['Posteriorly','Medially','Anteriorly','Inferiorly'],2,'The palms face anteriorly in standard anatomical position.','Describe the reference posture used in anatomy.'),
+ mcq('fnd-proximal','The elbow is ___ to the wrist.',['Distal','Proximal','Inferior','Medial'],1,'Proximal means nearer to the trunk or point of attachment.','Apply proximal and distal terminology.'),
+ mcq('fnd-joint-axis','Flexion and extension mainly occur in which anatomical plane?',['Sagittal','Frontal','Transverse','Oblique'],0,'Flexion and extension are primarily movements in the sagittal plane.','Connect planes with movement.'),
+];
+
+const directionalMap:Activity[]=[
+ {...base('fnd-biceps','Rotate the upper-arm model, then type the anterior muscle that flexes the elbow.','Biceps brachii lies in the anterior arm and helps flex the elbow.','Locate an anterior muscle using a movement clue.','Muscular system'),kind:'type-label',organ:'muscle-arm',target:'biceps',accepted:['biceps','biceps brachii'],hint:'Inspect the prominent muscle on the front of the arm.'},
+ mcq('fnd-anterior','The sternum is ___ to the heart.',['Posterior','Anterior','Inferior','Lateral'],1,'The sternum lies anterior to the heart.','Use anterior and posterior relationships.'),
+ mcq('fnd-superficial','The skin is ___ to skeletal muscle.',['Deep','Superficial','Distal','Medial'],1,'Skin is superficial to muscle because it is closer to the body surface.','Use superficial and deep terminology.'),
+ mcq('fnd-ipsilateral','The right hand and right foot are described as…',['Contralateral','Ipsilateral','Proximal','Superficial'],1,'Ipsilateral structures are on the same side of the body.','Distinguish same-side from opposite-side relationships.'),
+];
+
+const respiratoryFoundation:Activity[]=[
+ {...base('fnd-trachea','Rotate the lungs, then type the central airway that divides toward both lungs.','The trachea conducts air from the larynx and divides into the main bronchi.','Identify a respiratory landmark in 3D.','Lungs'),kind:'type-label',organ:'lungs',target:'trachea',accepted:['trachea','windpipe'],hint:'Look above the branching bronchi in the midline.'},
+ mcq('fnd-thoracic-cavity','The lungs are located within the…',['Cranial cavity','Thoracic cavity','Vertebral canal','Pelvic cavity'],1,'The lungs occupy the thoracic cavity on either side of the mediastinum.','Associate an organ with its body cavity.','Lungs'),
+ mcq('fnd-lateral','Each lung is ___ to the heart.',['Medial','Lateral','Superior','Posterior'],1,'The lungs lie lateral to the centrally positioned heart.','Apply medial and lateral terminology.','Lungs'),
+ mcq('fnd-inferior','The diaphragm is ___ to the lungs.',['Superior','Anterior','Inferior','Medial'],2,'The diaphragm forms the inferior boundary of the thoracic cavity.','Use a spatial relationship in the thorax.','Lungs'),
 ];
 
 const heartChambers:Activity[]=[
@@ -88,9 +109,9 @@ const named=(prefix:string,titles:string[],icon:string,activities:Activity[])=>t
 
 export const units:Unit[]=[
  {id:'foundations',title:'Foundations',description:'Orientation, body planes, and anatomical language.',color:'#ff8669',lessons:[
-  lesson('anatomy-map','Your anatomy map','✦',foundationMap),
-  lesson('anatomical-position','Anatomical position','↕',[...foundationMap,mcq('fnd-palms','In standard anatomical position, the palms face…',['Posteriorly','Medially','Anteriorly','Inferiorly'],2,'The palms face anteriorly in standard anatomical position.','Describe anatomical position.')]),
-  ...named('foundations',['Directional language','Planes in practice','Inside the body','Regions and quadrants','Surface landmarks','Imaging orientation','Movement vocabulary','Anatomy map lab','Foundations checkpoint'],'◫',foundationMap),
+ lesson('anatomy-map','Your anatomy map','✦',foundationMap),
+  lesson('anatomical-position','Anatomical position','↕',positionMap),
+  ...['Directional language','Planes in practice','Inside the body','Regions and quadrants','Surface landmarks','Imaging orientation','Movement vocabulary','Anatomy map lab','Foundations checkpoint'].map((title,index)=>lesson(`foundations-${index+1}`,title,'◫',[directionalMap,respiratoryFoundation,positionMap,foundationMap][index%4])),
  ]},
  {id:'skeletal',title:'Skeletal System',description:'Build your framework from skull to toes.',color:'#f4b844',lessons:named('skeletal',['Bones, first look','Bone tissue','Axial skeleton','Skull landmarks','Vertebral column','Thoracic cage','Upper limb','Hand and wrist','Pelvis','Lower limb','Joints in motion','Skeletal checkpoint'],'🦴',skeletalLab)},
  {id:'muscular',title:'Muscular System',description:'Link form, force, movement, and clinical function.',color:'#d9565b',lessons:named('muscle',['Muscle map','Upper arm actions','Rotator cuff','Forearm compartments','Hip and thigh','Leg and ankle','Diaphragm','Muscle contraction','Peripheral nerve injuries','Muscular checkpoint'],'💪',muscleLab)},
