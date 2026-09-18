@@ -338,6 +338,7 @@ export default function MicoApp({
             learner={learner}
             soundEnabled={soundEnabled}
             onToggleSound={() => setSoundEnabled((value) => !value)}
+            onPractice={() => go("practice")}
           />
         )}
       </section>
@@ -347,6 +348,8 @@ export default function MicoApp({
             weakTopics: progress.weak,
             mastery: Math.max(...Object.values(progress.mastery), 0),
           }}
+          onExplore={onExplore}
+          onPractice={() => go("practice")}
         />
       )}
       <nav className="mico-mobile-nav" aria-label="Mobile navigation">
@@ -1714,6 +1717,7 @@ function LessonPlayer({
   learner,
   soundEnabled,
   onToggleSound,
+  onPractice,
 }: {
   lesson: Lesson;
   progress: MicoProgress;
@@ -1723,6 +1727,7 @@ function LessonPlayer({
   learner: MicoLearner;
   soundEnabled: boolean;
   onToggleSound: () => void;
+  onPractice: () => void;
 }) {
   const [step, setStep] = useState(0),
     [answer, setAnswer] = useState<ActivityAnswer | undefined>(),
@@ -1931,6 +1936,8 @@ function LessonPlayer({
           weakTopics: progress.weak,
           mastery: progress.mastery[activity.concept ?? lesson.title],
         }}
+        onExplore={onExplore}
+        onPractice={onPractice}
       />
     </>
   );

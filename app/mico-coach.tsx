@@ -13,6 +13,7 @@ type CoachContext = {
 };
 
 type Message = { role: "coach" | "learner"; content: string };
+type CoachAction = { type: "open_atlas" | "open_practice"; label: string; concept?: string };
 
 const prompts = [
   { label: "Explain this", question: "Explain the current concept simply, using a visual analogy if helpful." },
@@ -20,11 +21,20 @@ const prompts = [
   { label: "What next?", question: "Based on my current progress, tell me the one anatomy concept I should practice next and why." },
 ];
 
-export default function MicoCoach({ context }: { context: CoachContext }) {
+export default function MicoCoach({
+  context,
+  onExplore,
+  onPractice,
+}: {
+  context: CoachContext;
+  onExplore?: (concept?: string) => void;
+  onPractice?: () => void;
+}) {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [actions, setActions] = useState<CoachAction[]>([]);
   const [error, setError] = useState("");
   const transcript = useRef<HTMLDivElement>(null);
 
@@ -40,6 +50,7 @@ export default function MicoCoach({ context }: { context: CoachContext }) {
     const cleanQuestion = question.trim();
     if (!cleanQuestion || loading) return;
     setError("");
+    setActions([]);
     setInput("");
     setMessages((current) => [...current, { role: "learner", content: cleanQuestion }]);
     setLoading(true);
@@ -49,9 +60,10 @@ export default function MicoCoach({ context }: { context: CoachContext }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ question: cleanQuestion, context }),
       });
-      const data = (await response.json()) as { answer?: string; error?: string };
+      const data = (await response.json()) as { answer?: string; actions?: CoachAction[]; error?: string };
       if (!response.ok || !data.answer) throw new Error(data.error ?? "Mico Coach could not answer.");
       setMessages((current) => [...current, { role: "coach", content: data.answer as string }]);
+      setActions(Array.isArray(data.actions) ? data.actions.slice(0, 2) : []);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Mico Coach could not answer.");
     } finally {
@@ -62,6 +74,12 @@ export default function MicoCoach({ context }: { context: CoachContext }) {
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     void ask(input);
+  };
+
+  const runAction = (action: CoachAction) => {
+    if (action.type === "open_atlas") onExplore?.(action.concept ?? context.concept);
+    if (action.type === "open_practice") onPractice?.();
+    setOpen(false);
   };
 
   return (
@@ -86,6 +104,15 @@ export default function MicoCoach({ context }: { context: CoachContext }) {
             ))}
             {loading && <article className="coach thinking"><Bot size={15} /><p><span /> <span /> <span /></p></article>}
           </div>
+          {actions.length > 0 && (
+            <div className="mico-coach-actions">
+              {actions.map((action, index) => (
+                <button type="button" key={`${action.type}-${index}`} onClick={() => runAction(action)}>
+                  <Sparkles size={14} /> {action.label}
+                </button>
+              ))}
+            </div>
+          )}
           {messages.length === 0 && (
             <div className="mico-coach-prompts">
               {prompts.map((prompt) => <button type="button" key={prompt.label} onClick={() => void ask(prompt.question)}>{prompt.label}</button>)}
