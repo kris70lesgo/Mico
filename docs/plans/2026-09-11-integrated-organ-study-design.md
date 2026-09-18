@@ -16,7 +16,7 @@
 - Create: `public/study/*`
 - Create: `app/study-data.ts`
 
-**Step 1:** Copy the nine dedicated GLB models and their organ/location/microscopic/compare illustrations from `anatomy-main` into static assets served by this Vite application.
+**Step 1:** Serve the nine dedicated GLB models and their organ/location/microscopic/compare illustrations from the portable `public/study/` asset catalog.
 
 **Step 2:** Define supported organ identities, exact/normalized name aliases, hotspots, accessible labels, concise facts, and asset paths in one catalog.
 
