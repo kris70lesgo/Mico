@@ -1,6 +1,5 @@
-import { redirect } from "next/navigation";
+import MarketingLanding from "./marketing-landing";
 
 export default function Home() {
-  redirect("/login");
-  return null;
+  return <MarketingLanding />;
 }
