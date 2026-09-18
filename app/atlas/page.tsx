@@ -217,6 +217,7 @@ export default function AtlasPage() {
 
   return (
     <main className="studio">
+      <link rel="preload" href="/models/atlas.json" as="fetch" crossOrigin="anonymous" />
       {atlas && !state.isolate && (
         <AnatomyScene
           atlas={atlas}
@@ -507,7 +508,7 @@ export default function AtlasPage() {
         <button onClick={() => setAboutOpen(true)}>Source & credits</button>
       </footer>
 
-      {progress < 100 && !error && (
+      {progress === 0 && !error && (
         <div className="loading glass" role="status">
           <div>
             <strong>Preparing the anatomy</strong>

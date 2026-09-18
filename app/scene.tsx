@@ -72,7 +72,12 @@ export default function AnatomyScene({atlas,state,onSelect,onProgress,onError}:P
     const list=groups.get(p.system)??[];list.push(g);groups.set(p.system,list);
    });
    groups.forEach((gs,system)=>{const geometry=mergeGeometries(gs,false);if(!geometry)throw new Error('Could not assemble anatomy geometry.');geometries.push(geometry);const mesh=new T.Mesh(geometry,mats.get(system as never));mesh.frustumCulled=false;scene.add(mesh);});
-   lastState=null;loaded++;onProgress(Math.round(loaded/atlas.chunks.length*100));dirty=true;
+   lastState=null;
+   loaded++;
+   // Show the first assembled geometry immediately. The remaining chunks keep
+   // streaming in the background instead of holding the whole viewer hostage.
+   if(loaded===1)ready=true;
+   onProgress(Math.round(loaded/atlas.chunks.length*100));dirty=true;
   };
   (async()=>{try{let cursor=0;await Promise.all(Array.from({length:3},async()=>{while(cursor<atlas.chunks.length){const i=cursor++;await loadChunk(i);}}));if(!disposed){ready=true;dirty=true;}}catch(e){if(!disposed)onError(e instanceof Error?e.message:'Could not load the anatomy.');}})();
   const fit=(view:string,extent=0)=>{
