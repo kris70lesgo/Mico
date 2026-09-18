@@ -67,6 +67,8 @@ import "./mico-shop.css";
 import "./mico-learning-loop.css";
 import "./mico-mobile.css";
 import { playMicoSound } from "./mico-sound";
+import MicoCoach from "./mico-coach";
+import "./mico-coach.css";
 
 type View =
   | "learn"
@@ -339,6 +341,14 @@ export default function MicoApp({
           />
         )}
       </section>
+      {view !== "lesson" && (
+        <MicoCoach
+          context={{
+            weakTopics: progress.weak,
+            mastery: Math.max(...Object.values(progress.mastery), 0),
+          }}
+        />
+      )}
       <nav className="mico-mobile-nav" aria-label="Mobile navigation">
         {(
           [
@@ -1822,7 +1832,8 @@ function LessonPlayer({
     );
   }
   return (
-    <div className="mico-lesson">
+    <>
+      <div className="mico-lesson">
       <header>
         <button className="mico-lesson-exit" onClick={onExit} aria-label="Exit lesson">×</button>
         <div
@@ -1910,6 +1921,17 @@ function LessonPlayer({
           <ChevronRight size={18} />
         </button>
       </footer>
-    </div>
+      </div>
+      <MicoCoach
+        context={{
+          lesson: lesson.title,
+          activity: activity.prompt,
+          objective: activity.learningObjective,
+          concept: activity.concept,
+          weakTopics: progress.weak,
+          mastery: progress.mastery[activity.concept ?? lesson.title],
+        }}
+      />
+    </>
   );
 }
