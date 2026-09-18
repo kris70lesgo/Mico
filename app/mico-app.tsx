@@ -599,9 +599,19 @@ function Learn({
                     : "Locked · complete the previous section to continue."}
                 </p>
                 {isOpen && (
-                  <div className="mico-section-progress">
-                    <i style={{ width: `${percentage}%` }} />
+                  <div
+                    className="mico-section-progress"
+                    role="progressbar"
+                    aria-label={`${unit.title} progress`}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-valuenow={percentage}
+                  >
+                    <i style={{ width: `${Math.max(7, percentage)}%` }} />
                     <b>{percentage}%</b>
+                    <span className="mico-section-trophy" aria-hidden="true">
+                      <Trophy size={21} fill="currentColor" />
+                    </span>
                   </div>
                 )}
                 <button
@@ -1712,7 +1722,8 @@ function LessonPlayer({
     [economyError, setEconomyError] = useState(""),
     [earned, setEarned] = useState(0);
   const activity = lesson.activities[step],
-    finish = step === lesson.activities.length;
+    finish = step === lesson.activities.length,
+    lessonPercent = Math.round((step / lesson.activities.length) * 100);
   const ready =
     !!answer &&
     (activity?.kind !== "sequence-flow" ||
@@ -1813,9 +1824,18 @@ function LessonPlayer({
   return (
     <div className="mico-lesson">
       <header>
-        <button onClick={onExit}>×</button>
-        <div>
-          <i style={{ width: `${(step / lesson.activities.length) * 100}%` }} />
+        <button className="mico-lesson-exit" onClick={onExit} aria-label="Exit lesson">×</button>
+        <div
+          className="mico-lesson-progress"
+          role="progressbar"
+          aria-label="Lesson progress"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={lessonPercent}
+        >
+          <i style={{ width: `${Math.max(7, lessonPercent)}%` }} />
+          <b>{lessonPercent}%</b>
+          <span className="mico-lesson-trophy" aria-hidden="true"><Trophy size={22} fill="currentColor" /></span>
         </div>
         <button
           className="mico-lesson-sound"

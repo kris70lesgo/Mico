@@ -1,6 +1,12 @@
 /* Exercises use a focused, full-canvas learning mode — no app navigation. */
 .mico-shell:has(.mico-lesson) .mico-side,.mico-shell:has(.mico-lesson) .mico-mobile,.mico-shell:has(.mico-lesson) .mico-top{display:none}
 .mico-shell:has(.mico-lesson) .mico-main{width:100%;margin-left:0;padding-top:28px;padding-right:clamp(24px,6vw,96px);padding-left:clamp(24px,6vw,96px)}
+.mico-lesson>header{height:62px!important;gap:16px!important}
+.mico-lesson>header .mico-lesson-exit{display:grid;flex:0 0 42px;width:42px;height:42px;place-items:center;padding:0;border-radius:13px;background:transparent;color:#718894;font-size:30px;line-height:1}
+.mico-lesson>header .mico-lesson-progress{position:relative;isolation:isolate;display:grid;flex:1;min-width:120px;height:18px;place-items:center;overflow:visible!important;border-radius:999px;background:#213941;box-shadow:inset 0 2px 0 #132b33}
+.mico-lesson>header .mico-lesson-progress>i{position:absolute;z-index:-1;top:0;bottom:0;left:0;display:block;min-width:38px;height:auto;border-radius:inherit;background:#92d535;box-shadow:inset 0 -4px #6bad1d;transition:width .25s ease}
+.mico-lesson>header .mico-lesson-progress>b{color:#eff5f6;font-size:15px;font-weight:900;letter-spacing:.04em;line-height:1}
+.mico-lesson>header .mico-lesson-trophy{position:absolute;right:-9px;top:50%;display:grid;width:42px;height:42px;place-items:center;border:4px solid #435861;border-radius:15px;background:#2c424b;color:#fff;box-shadow:0 3px 0 #172d35;transform:translateY(-50%)}
 .mico-lesson>header>span{margin-left:auto;font-size:15px}
 .mico-lesson>header .mico-lesson-sound{margin-left:auto;border:0;background:transparent;color:#718894;font-size:0;padding:8px;display:grid;place-items:center}.mico-lesson>header .mico-lesson-sound+span{margin-left:0}
 .mico-lesson footer{width:100vw;margin-right:calc(50% - 50vw);margin-left:calc(50% - 50vw);padding-right:max(24px,calc((100vw - 750px)/2));padding-left:max(24px,calc((100vw - 750px)/2))}
@@ -48,6 +54,13 @@
 
 @media(max-width:680px){
   .mico-shell:has(.mico-lesson) .mico-main{height:100dvh;min-height:100dvh;padding:18px 16px 0}
+  .mico-lesson>header{height:50px!important;gap:10px!important}
+  .mico-lesson>header .mico-lesson-exit{flex-basis:36px;width:36px;height:36px;font-size:26px}
+  .mico-lesson>header .mico-lesson-progress{height:16px;min-width:0}
+  .mico-lesson>header .mico-lesson-progress>b{font-size:13px}
+  .mico-lesson>header .mico-lesson-progress>i{min-width:30px;box-shadow:inset 0 -3px #6bad1d}
+  .mico-lesson>header .mico-lesson-trophy{right:-5px;width:35px;height:35px;border-width:3px;border-radius:12px}
+  .mico-lesson>header .mico-lesson-trophy svg{width:18px;height:18px}
   .mico-shell:has(.mico-lesson) .mico-lesson footer{padding-right:16px;padding-left:16px}
   .mico-lesson footer.failure{min-height:170px;grid-template-columns:55px minmax(0,1fr);gap:12px;padding-top:18px;padding-bottom:18px}
   .mico-lesson footer.failure:before{width:55px;height:55px;font-size:42px}

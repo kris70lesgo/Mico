@@ -108,3 +108,65 @@
   .mico-main{min-height:calc(100dvh - 58px)!important;padding-bottom:20px!important}
   .mico-mobile{height:58px!important}
 }
+
+/* Shared section progress rail — matches the lesson-player progress treatment. */
+.mico-section-card .mico-section-progress{
+  position:relative;
+  z-index:1;
+  display:grid;
+  width:min(100%,350px);
+  height:18px;
+  margin:24px 0;
+  place-items:center;
+  overflow:visible;
+  border-radius:999px;
+  background:#213941;
+  box-shadow:inset 0 1px 1px #102329,0 2px 0 #d7e4e8;
+}
+
+.mico-section-card .mico-section-progress>i{
+  position:absolute;
+  z-index:-1;
+  top:0;
+  bottom:0;
+  left:0;
+  display:block;
+  min-width:38px;
+  height:auto;
+  margin:0;
+  border-radius:inherit;
+  background:linear-gradient(90deg,#a6df3f,#72c72a);
+  box-shadow:inset 0 2px #c4f26b;
+}
+
+.mico-section-card .mico-section-progress>i:after{content:none}
+
+.mico-section-card .mico-section-progress>b{
+  position:relative;
+  z-index:1;
+  color:#fff;
+  font:900 12px/1 "Avenir Next",ui-rounded,sans-serif;
+  letter-spacing:.02em;
+}
+
+.mico-section-card .mico-section-trophy{
+  position:absolute;
+  z-index:2;
+  top:50%;
+  right:-10px;
+  display:grid;
+  width:38px;
+  height:38px;
+  box-sizing:border-box;
+  place-items:center;
+  transform:translateY(-50%);
+  border:4px solid #fff;
+  border-radius:13px;
+  background:#58cc02;
+  color:#fff;
+  box-shadow:0 3px 0 #3d9704,0 2px 8px #21394133;
+}
+
+@media(max-width:620px){
+  .mico-section-card .mico-section-progress{width:calc(100% - 18px);margin:20px 0}
+}
