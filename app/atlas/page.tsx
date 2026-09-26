@@ -39,6 +39,8 @@ import {
   type View,
 } from "../anatomy";
 import { hasStudyIllustrations, studyAsset, studyForName } from "../study-data";
+import MicoCoach, { type CoachAction } from "../mico-coach";
+import "../mico-coach.css";
 import "../mico-atlas-return.css";
 
 const initial: SceneState = {
@@ -214,6 +216,16 @@ export default function AtlasPage() {
         ? current.visible.filter((item) => item !== id)
         : [...current.visible, id],
     }));
+
+  const runCoachAtlasAction = (action: CoachAction) => {
+    if (action.type === "atlas_show_system" && action.system && activeSystems.some((system) => system.id === action.system)) {
+      setState((current) => ({ ...current, visible: [action.system as SystemId], selected: [], isolate: false, rotate: false }));
+    }
+    if (action.type === "atlas_show_all") {
+      setState((current) => ({ ...current, visible: activeSystems.map((system) => system.id), selected: [], isolate: false }));
+    }
+    if (action.type === "atlas_reset") reset();
+  };
 
   return (
     <main className="studio">
@@ -507,6 +519,15 @@ export default function AtlasPage() {
       <footer className="studio-footer">
         <button onClick={() => setAboutOpen(true)}>Source & credits</button>
       </footer>
+      <MicoCoach
+        context={{
+          page: "3D Atlas",
+          concept: chosen?.name ?? selected?.name ?? "whole-body anatomy model",
+          workspace: `Visible systems: ${activeSystems.filter((system) => state.visible.includes(system.id)).map((system) => system.name).join(", ") || "none"}. ${state.isolate ? "An isolated structure is open." : "The full 3D body is open."} ${chosen ? `Selected structure: ${chosen.name}.` : "No individual structure is selected."}`,
+          weakTopics: [],
+        }}
+        onAtlasAction={runCoachAtlasAction}
+      />
 
       {progress === 0 && !error && (
         <div className="loading glass" role="status">

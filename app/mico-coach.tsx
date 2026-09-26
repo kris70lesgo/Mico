@@ -4,6 +4,8 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { Bot, ChevronDown, MessageCircle, Send, Sparkles, X } from "lucide-react";
 
 type CoachContext = {
+  page?: string;
+  workspace?: string;
   lesson?: string;
   activity?: string;
   objective?: string;
@@ -13,7 +15,51 @@ type CoachContext = {
 };
 
 type Message = { role: "coach" | "learner"; content: string };
-type CoachAction = { type: "open_atlas" | "open_practice"; label: string; concept?: string };
+export type CoachAction = {
+  type: "open_atlas" | "open_practice" | "atlas_show_system" | "atlas_show_all" | "atlas_reset";
+  label: string;
+  concept?: string;
+  system?: string;
+  execute?: boolean;
+};
+
+const atlasSystemAliases: Record<string, string[]> = {
+  skeletal: ["skeleton", "skeletal", "bones", "bone"],
+  muscular: ["muscle", "muscles", "muscular"],
+  nervous: ["nervous", "nerves", "nerve"],
+  cardiac: ["heart", "cardiac"],
+  respiratory: ["respiratory", "lungs", "lung"],
+  digestive: ["digestive", "digestive system"],
+  arterial: ["arteries", "arterial"],
+  venous: ["veins", "venous"],
+  urinary: ["urinary", "kidneys", "kidney"],
+  lymphatic: ["lymphatic", "lymph"],
+  endocrine: ["endocrine"],
+  reproductive: ["reproductive"],
+  sensory: ["sensory", "sense organs"],
+  connective: ["connective", "connective tissue"],
+  integumentary: ["skin", "body surface", "integumentary"],
+};
+
+function atlasCommand(question: string, context: CoachContext): CoachAction | null {
+  if (context.page !== "3D Atlas") return null;
+  const normalized = question.toLowerCase();
+  const isCommand = /\b(show|display|focus on|isolate|hide|turn on|view|reset|start over)\b/.test(normalized);
+  if (!isCommand) return null;
+  if (/\b(show|display|turn on)\b.*\b(all|everything)\b/.test(normalized)) {
+    return { type: "atlas_show_all", label: "Showing all body systems", execute: true };
+  }
+  if (/\b(reset|start over)\b/.test(normalized)) {
+    return { type: "atlas_reset", label: "Resetting the Atlas view", execute: true };
+  }
+  for (const [system, aliases] of Object.entries(atlasSystemAliases)) {
+    if (aliases.some((alias) => normalized.includes(alias))) {
+      const label = system === "nervous" ? "nervous system" : aliases[0];
+      return { type: "atlas_show_system", system, label: `Showing only the ${label}`, execute: true };
+    }
+  }
+  return null;
+}
 
 const prompts = [
   { label: "Explain this", question: "Explain the current concept simply, using a visual analogy if helpful." },
@@ -25,10 +71,12 @@ export default function MicoCoach({
   context,
   onExplore,
   onPractice,
+  onAtlasAction,
 }: {
   context: CoachContext;
   onExplore?: (concept?: string) => void;
   onPractice?: () => void;
+  onAtlasAction?: (action: CoachAction) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
@@ -38,7 +86,9 @@ export default function MicoCoach({
   const [error, setError] = useState("");
   const transcript = useRef<HTMLDivElement>(null);
 
-  const greeting = context.concept
+  const greeting = context.page === "3D Atlas"
+    ? `I can see the Atlas state. Ask me to explain what is visible, or say “show me the nervous system.”`
+    : context.concept
     ? `I’m here to help with ${context.concept}. Want a quick explanation or a mini-quiz?`
     : "I can explain anatomy, quiz you, or point you to the best next practice.";
 
@@ -54,6 +104,8 @@ export default function MicoCoach({
     setInput("");
     setMessages((current) => [...current, { role: "learner", content: cleanQuestion }]);
     setLoading(true);
+    const directAtlasCommand = atlasCommand(cleanQuestion, context);
+    if (directAtlasCommand) onAtlasAction?.(directAtlasCommand);
     try {
       const response = await fetch("/api/mico-coach", {
         method: "POST",
@@ -62,10 +114,17 @@ export default function MicoCoach({
       });
       const data = (await response.json()) as { answer?: string; actions?: CoachAction[]; error?: string };
       if (!response.ok || !data.answer) throw new Error(data.error ?? "Mico Coach could not answer.");
+      const nextActions = Array.isArray(data.actions) ? data.actions.slice(0, 2) : [];
+      const executableAction = nextActions.find((action) => action.execute && action.type.startsWith("atlas_"));
+      if (executableAction) onAtlasAction?.(executableAction);
       setMessages((current) => [...current, { role: "coach", content: data.answer as string }]);
-      setActions(Array.isArray(data.actions) ? data.actions.slice(0, 2) : []);
+      setActions(nextActions.filter((action) => action !== executableAction));
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Mico Coach could not answer.");
+      if (directAtlasCommand) {
+        setMessages((current) => [...current, { role: "coach", content: `${directAtlasCommand.label}. I can still control the Atlas even while my explanation service is unavailable.` }]);
+      } else {
+        setError(cause instanceof Error ? cause.message : "Mico Coach could not answer.");
+      }
     } finally {
       setLoading(false);
     }
@@ -79,6 +138,7 @@ export default function MicoCoach({
   const runAction = (action: CoachAction) => {
     if (action.type === "open_atlas") onExplore?.(action.concept ?? context.concept);
     if (action.type === "open_practice") onPractice?.();
+    if (action.type.startsWith("atlas_")) onAtlasAction?.(action);
     setOpen(false);
   };
 
@@ -92,7 +152,7 @@ export default function MicoCoach({
             <button type="button" onClick={() => setOpen(false)} aria-label="Close Mico Coach"><X size={19} /></button>
           </header>
           <div className="mico-coach-context">
-            <Sparkles size={15} /> {context.concept ? `Studying ${context.concept}` : "Personalized to your learning path"}
+            <Sparkles size={15} /> {context.page === "3D Atlas" ? `Working in the 3D Atlas · ${context.concept ?? "whole-body model"}` : context.concept ? `Studying ${context.concept}` : "Personalized to your learning path"}
           </div>
           <div className="mico-coach-transcript" ref={transcript} aria-live="polite">
             <article className="coach"><Bot size={15} /><p>{greeting}</p></article>
