@@ -1,7 +1,24 @@
 "use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { Bot, ChevronDown, MessageCircle, Send, Sparkles, X } from "lucide-react";
+import { Bot, ChevronDown, MessageCircle, Mic, MicOff, Send, Sparkles, Volume2, VolumeX, X } from "lucide-react";
+
+type RecognitionAlternative = { transcript: string };
+type RecognitionEvent = { results: ArrayLike<ArrayLike<RecognitionAlternative>> };
+type BrowserSpeechRecognition = {
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  maxAlternatives: number;
+  onstart: (() => void) | null;
+  onend: (() => void) | null;
+  onresult: ((event: RecognitionEvent) => void) | null;
+  onerror: ((event: { error: string }) => void) | null;
+  start: () => void;
+  stop: () => void;
+  abort: () => void;
+};
+type BrowserSpeechRecognitionConstructor = new () => BrowserSpeechRecognition;
 
 type CoachContext = {
   page?: string;
@@ -84,7 +101,32 @@ export default function MicoCoach({
   const [messages, setMessages] = useState<Message[]>([]);
   const [actions, setActions] = useState<CoachAction[]>([]);
   const [error, setError] = useState("");
+  const [voiceSupported, setVoiceSupported] = useState(false);
+  const [listening, setListening] = useState(false);
+  const [voiceReplies, setVoiceReplies] = useState(true);
   const transcript = useRef<HTMLDivElement>(null);
+  const recognition = useRef<BrowserSpeechRecognition | null>(null);
+
+  const speak = (answer: string) => {
+    if (!voiceReplies || typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(answer);
+    utterance.rate = 0.96;
+    utterance.pitch = 1.04;
+    window.speechSynthesis.speak(utterance);
+  };
+
+  useEffect(() => {
+    const browser = window as typeof window & {
+      SpeechRecognition?: BrowserSpeechRecognitionConstructor;
+      webkitSpeechRecognition?: BrowserSpeechRecognitionConstructor;
+    };
+    setVoiceSupported(Boolean(browser.SpeechRecognition ?? browser.webkitSpeechRecognition));
+    return () => {
+      recognition.current?.abort();
+      window.speechSynthesis?.cancel();
+    };
+  }, []);
 
   const greeting = context.page === "3D Atlas"
     ? `I can see the Atlas state. Ask me to explain what is visible, or say “show me the nervous system.”`
@@ -95,6 +137,45 @@ export default function MicoCoach({
   useEffect(() => {
     if (open) transcript.current?.scrollTo({ top: transcript.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading, open]);
+
+  const startListening = () => {
+    const browser = window as typeof window & {
+      SpeechRecognition?: BrowserSpeechRecognitionConstructor;
+      webkitSpeechRecognition?: BrowserSpeechRecognitionConstructor;
+    };
+    const Recognition = browser.SpeechRecognition ?? browser.webkitSpeechRecognition;
+    if (!Recognition) {
+      setError("Voice input is not available in this browser. You can still type to Mico.");
+      return;
+    }
+    if (listening) {
+      recognition.current?.stop();
+      return;
+    }
+    setError("");
+    const session = new Recognition();
+    recognition.current = session;
+    session.lang = navigator.language || "en-US";
+    session.continuous = false;
+    session.interimResults = false;
+    session.maxAlternatives = 1;
+    session.onstart = () => setListening(true);
+    session.onend = () => setListening(false);
+    session.onerror = (event) => {
+      setListening(false);
+      if (event.error !== "aborted") setError(event.error === "not-allowed" ? "Microphone access is needed for voice chat." : "I could not hear that clearly. Please try again.");
+    };
+    session.onresult = (event) => {
+      const spoken = Array.from(event.results)
+        .map((result) => result[0]?.transcript ?? "")
+        .join(" ")
+        .trim();
+      if (!spoken) return;
+      setInput(spoken);
+      void ask(spoken);
+    };
+    session.start();
+  };
 
   const ask = async (question: string) => {
     const cleanQuestion = question.trim();
@@ -110,7 +191,7 @@ export default function MicoCoach({
       const response = await fetch("/api/mico-coach", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: cleanQuestion, context }),
+        body: JSON.stringify({ question: cleanQuestion, context, history: messages.slice(-6) }),
       });
       const data = (await response.json()) as { answer?: string; actions?: CoachAction[]; error?: string };
       if (!response.ok || !data.answer) throw new Error(data.error ?? "Mico Coach could not answer.");
@@ -118,6 +199,7 @@ export default function MicoCoach({
       const executableAction = nextActions.find((action) => action.execute && action.type.startsWith("atlas_"));
       if (executableAction) onAtlasAction?.(executableAction);
       setMessages((current) => [...current, { role: "coach", content: data.answer as string }]);
+      speak(data.answer as string);
       setActions(nextActions.filter((action) => action !== executableAction));
     } catch (cause) {
       if (directAtlasCommand) {
@@ -149,6 +231,7 @@ export default function MicoCoach({
           <header>
             <span className="mico-coach-avatar"><Bot size={20} /></span>
             <span><b>Mico Coach</b><small><i /> AI anatomy tutor</small></span>
+            <button type="button" onClick={() => { setVoiceReplies((value) => !value); window.speechSynthesis?.cancel(); }} aria-label={voiceReplies ? "Mute Mico voice" : "Turn on Mico voice"} title={voiceReplies ? "Mute Mico voice" : "Turn on Mico voice"}>{voiceReplies ? <Volume2 size={18} /> : <VolumeX size={18} />}</button>
             <button type="button" onClick={() => setOpen(false)} aria-label="Close Mico Coach"><X size={19} /></button>
           </header>
           <div className="mico-coach-context">
@@ -181,9 +264,12 @@ export default function MicoCoach({
           {error && <p className="mico-coach-error">{error}</p>}
           <form onSubmit={submit}>
             <input value={input} onChange={(event) => setInput(event.target.value)} maxLength={600} placeholder="Ask about this anatomy…" aria-label="Ask Mico Coach" />
+            <button className={`mico-coach-mic ${listening ? "listening" : ""}`} type="button" onClick={startListening} disabled={loading} aria-label={listening ? "Stop listening" : "Talk to Mico"} title={voiceSupported ? "Talk to Mico" : "Voice input is not supported in this browser"}>
+              {listening ? <MicOff size={17} /> : <Mic size={17} />}
+            </button>
             <button type="submit" disabled={!input.trim() || loading} aria-label="Send question"><Send size={17} /></button>
           </form>
-          <footer>Educational support only · Not medical advice</footer>
+          <footer>{voiceSupported ? "Tap the mic to speak · Educational support only · Not medical advice" : "Voice input works in supported browsers · Educational support only · Not medical advice"}</footer>
         </section>
       )}
       <button className="mico-coach-launcher" type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open}>
